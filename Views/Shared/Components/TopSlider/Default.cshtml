@@ -1,0 +1,44 @@
+@model List<Post>
+<div class="hero-slider-1 th-carousel" data-fade="true" data-slide-show="1" data-md-slide-show="1" data-adaptive-height="true">
+            @foreach(var post in Model){
+                <div class="th-hero-slide">
+                <div class="th-hero-bg" data-overlay="black" data-opacity="6">
+                    <img src="~/img/lilith-diablo.jpg">
+                </div>
+                <div class="container">
+                    <div class="blog-bg-style1">
+                        <a data-theme-color="#6234AC" data-ani="slideinup" data-ani-delay="0.1s" href="blog.html" class="category"></a>
+                        <h3 data-ani="slideinup" data-ani-delay="0.3s" class="box-title-50"><a class="hover-line" href="blog-details.html">@post.PTitle</a></h3>
+                        <div class="blog-meta" data-ani="slideinup" data-ani-delay="0.5s">
+                            <a href="author.html"><i class="far fa-user"></i></a>
+                            <a href="blog.html"><i class="fal fa-calendar-days"></i>@post.PPublishedOn</a>
+                        </div>
+                            @{
+                            // Split the paragraph into sentences
+                            string[] sentences = @post.PContent.Split(new[] { '.', '!', '?' }, StringSplitOptions.RemoveEmptyEntries);
+                            
+                            // Ensure there are at least two sentences
+                            if (sentences.Length >= 2)
+                            {
+                                // Concatenate the first two sentences
+                                string twoSentence = sentences[0] + ". " + sentences[1] + ".";
+                                // Output the excerpt
+                                <p class="blog-text"  data-ani="slideinup" data-ani-delay="0.7s">@twoSentence</p>
+                                <button data-ani="slideinup" class="th-btn style3 mt-3" data-ani-delay="0.7s"> Devamını oku </button>
+                            }
+                            else
+                            {
+                                // Output the full paragraph if there are fewer than two sentences
+                                <p class="blog-text" data-ani="slideinup" data-ani-delay="0.7s">@post.PContent</p>
+                                <button data-ani="slideinup" class="th-btn style3 mt-3" data-ani-delay="0.7s"> Devamını oku </button>
+                            }
+                        }
+                       
+                    </div>
+                </div>
+
+            </div>
+            }
+            
+            
+        </div>
