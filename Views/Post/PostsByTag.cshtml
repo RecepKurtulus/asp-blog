@@ -1,0 +1,58 @@
+
+    <!--==============================
+Team Area  
+==============================-->
+@model PostViewModel
+    <section class="space">
+        <div class="container">
+            <div class="row gy-30">
+            @foreach(var post in Model.Posts){
+                 <div class="col-xl-3 col-lg-4 col-sm-6">
+                    <div class="blog-style1">
+                        <div class="blog-img">
+                            <img src="~/img/blog/blog_1_54.jpg"  alt="blog image">
+                            @{
+                                    string themeColor = ""; // Initialize theme color variable
+
+                                    // Check the value of Tag.TText and set themeColor accordingly
+                                    switch (Model.Tag.TText)
+                                    {
+                                        case "Oyun":
+                                            themeColor = "#E7473C";
+                                            break;
+                                        case "Dizi":
+                                            themeColor = "#00D084";
+                                            break;
+                                        case "Film":
+                                            themeColor = "#FF9500";
+                                            break;
+                                        default:
+                                            themeColor = "#FFF7F1"; // Default color
+                                            break;
+                                    }
+                                }
+                            <a data-theme-color="@themeColor"href="blog.html" class="category">@Model.Tag.TText</a>
+                        </div>
+                        <h3 class="box-title-20"><a class="hover-line" href="/posts/@post.PostId">@post.PTitle</a></h3>
+                        <div class="blog-meta">
+                            <a href="author.html"><i class="far fa-user"></i>By - Tnews</a>
+                            <a href="blog.html"><i class="fal fa-calendar-days"></i>@post.PPublishedOn</a>
+                        </div>
+                    </div>
+                </div>
+                
+            }
+               
+                
+            <div class="th-pagination mt-40 mb-0 text-center">
+                <ul>
+                    <li><a href="blog.html">01</a></li>
+                    <li><a href="blog.html">02</a></li>
+                    <li><a href="blog.html">03</a></li>
+                    <li><a href="blog.html"><i class="fas fa-arrow-right"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+ 

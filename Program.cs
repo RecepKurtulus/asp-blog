@@ -1,6 +1,7 @@
 using BuffBlog.Data.Abstract;
 using BuffBlog.Data.Concrete;
 using BuffBlog.Data.Concrete.EfCore;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +27,30 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.MapDefaultControllerRoute();
+app.MapControllerRoute(
+    //İsmini belirttik
+    name:"post_details",
+    //Hangi href patternini dinleyeceğini gösterdik
+    pattern:"posts/{id}",
+    //Patterne gelecek bir isteği nereye yönlendireceğini söyledik
+    defaults:new {controller="Post",action="PostDetails"}
+
+    
+);
+app.MapControllerRoute(
+    //İsmini belirttik
+    name:"post_by_tags",
+    //Hangi href patternini dinleyeceğini gösterdik
+    pattern:"categories/{ttext}",
+    //Patterne gelecek bir isteği nereye yönlendireceğini söyledik
+    defaults:new {controller="Post",action="GetPostsByTag"}
+
+    
+);
+app.MapControllerRoute(
+    name:"default",
+    pattern:"{controller=Home}/{action=Index}/{id?}"
+
+);
 
 app.Run();

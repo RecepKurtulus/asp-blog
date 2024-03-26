@@ -24,13 +24,13 @@
                                 string twoSentence = sentences[0] + ". " + sentences[1] + ".";
                                 // Output the excerpt
                                 <p class="blog-text"  data-ani="slideinup" data-ani-delay="0.7s">@twoSentence</p>
-                                <button data-ani="slideinup" class="th-btn style3 mt-3" data-ani-delay="0.7s"> Devamını oku </button>
+                                <a href="/posts/@post.PostId" data-ani="slideinup" class="th-btn style3 mt-3" data-ani-delay="0.7s"> Devamını oku </a>
                             }
                             else
                             {
                                 // Output the full paragraph if there are fewer than two sentences
                                 <p class="blog-text" data-ani="slideinup" data-ani-delay="0.7s">@post.PContent</p>
-                                <button data-ani="slideinup" class="th-btn style3 mt-3" data-ani-delay="0.7s"> Devamını oku </button>
+                                <a href="/posts/@post.PostId" data-ani="slideinup" class="th-btn style3 mt-3" data-ani-delay="0.7s"> Devamını oku </a>
                             }
                         }
                        

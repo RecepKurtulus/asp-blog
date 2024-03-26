@@ -1,0 +1,9 @@
+@model List<Tag>
+<ul>
+@foreach(var tag in Model){
+                                <li>
+                                    <a data-bg-src="~/img/bg/category_bg_1_1.jpg" href="/categories/@tag.TText">@tag.TText</a>
+                                </li>
+                                }
+                               
+                            </ul>
