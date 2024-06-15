@@ -1,4 +1,7 @@
-@model Post
+@model PostViewModel
+@{
+    int commentCount=0;
+}
 
 <!--==============================
         Blog Area
@@ -8,8 +11,11 @@
             <div class="row">
                 <div class="col-xxl-9 col-lg-8">
                     <div class="th-blog blog-single">
-                        <a data-theme-color="#4E4BD0" href="blog.html" class="category">Sports</a>
-                        <h2 class="blog-title">@Model.PTitle</h2>
+                    @foreach(var tags in Model.Post.Tags){
+                        <a data-theme-color="#4E4BD0" href="/categories/@tags.TText" class="category">@tags.TText</a>
+                    }
+                        
+                        <h2 class="blog-title">@Model.Post.PTitle</h2>
                         <div class="blog-meta">
                             <a class="author" href="blog.html"><i class="far fa-user"></i>By - Tnews</a>
                             <a href="blog.html"><i class="fal fa-calendar-days"></i>21 June, 2023</a>
@@ -146,9 +152,10 @@
                             <p class="author-text">Adventurer and passionate travel blogger. With a backpack full of stories and a camera in hand, she takes her readers on exhilarating journeys around the world.</p>
                         </div>
                     </div>
-                    <div class="th-comments-wrap ">
-                        <h2 class="blog-inner-title h3">Comments (03)</h2>
+                    <div  class="th-comments-wrap ">
+                        <h2 class="blog-inner-title h3">@commentCount</h2>
                         <ul class="comment-list">
+                        <div id='comments'>
                             <li class="th-comment-item">
                                 <div class="th-post-comment">
                                     <div class="comment-avater">
@@ -163,7 +170,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <ul class="children">
+                                </li>
+                                
                                     <li class="th-comment-item">
                                         <div class="th-post-comment">
                                             <div class="comment-avater">
@@ -179,52 +187,56 @@
                                             </div>
                                         </div>
                                     </li>
-                                </ul>
-                            </li>
-                            <li class="th-comment-item">
+                                
+                            
+                        
+                            @foreach(var comment in Model.Post.Comments){
+                                commentCount++;
+            
+                                <li class="th-comment-item">
                                 <div class="th-post-comment">
                                     <div class="comment-avater">
                                         <img src="~/img/blog/comment-author-3.jpg" alt="Comment Author">
                                     </div>
                                     <div class="comment-content">
-                                        <span class="commented-on"><i class="fas fa-calendar-alt"></i>16 March, 2023</span>
-                                        <h3 class="name">Ronald Richards</h3>
-                                        <p class="text">The way you seamlessly blend statistical insights with compelling storytelling creates an immersive and captivating reading experience. Whether it's the latest match updates, behind-the-scenes glimpses.</p>
+                                        <span class="commented-on"><i class="fas fa-calendar-alt"></i>@comment.CPublishedOn</span>
+                                        <h3 class="name">@comment.User.UserName</h3>
+                                        <p class="text">@comment.CText</p>
                                         <div class="reply_and_edit">
                                             <a href="blog-details.html" class="reply-btn"><i class="fas fa-reply"></i>Reply</a>
                                         </div>
                                     </div>
                                 </div>
                             </li>
+                            }
+                        </div>
+                            
+                            
                         </ul>
                     </div> <!-- Comment end --> <!-- Comment Form -->
-                    <div class="th-comment-form ">
+                    <form class="th-comment-form" action="/Post/CreateComment" method="post">
                         <div class="form-title">
-                            <h3 class="blog-inner-title mb-2">Leave a Comment</h3>
+                            <h3 class="blog-inner-title mb-2">Yorum Bırak ✍️</h3>
                             <p class="form-text">Your email address will not be published. Required fields are marked *</p>
                         </div>
                         <div class="row">
+                        
+                            <input type="hidden" name="PostId" id="PostId" value="@Model.Post.PostId">
                             <div class="col-md-6 form-group">
-                                <input type="text" placeholder="Your Name*" class="form-control">
+                                <input type="text" placeholder="Kullanıcı Adın" name="UserName" id="UserName" class="form-control">
                                 <i class="far fa-user"></i>
                             </div>
-                            <div class="col-md-6 form-group">
-                                <input type="text" placeholder="Your Email*" class="form-control">
-                                <i class="far fa-envelope"></i>
-                            </div>
+
+                            
                             <div class="col-12 form-group">
-                                <input type="text" placeholder="Website" class="form-control">
-                                <i class="far fa-globe"></i>
-                            </div>
-                            <div class="col-12 form-group">
-                                <textarea placeholder="Write a Comment*" class="form-control"></textarea>
+                                <textarea type="text" placeholder="Yorum" name="CText" id="CText" class="form-control"></textarea>
                                 <i class="far fa-pencil"></i>
                             </div>
                             <div class="col-12 form-group mb-0">
-                                <button class="th-btn">Post Comment</button>
+                                <button id="commentSaveBtn" type="submit" class="th-btn">Post Comment</button>
                             </div>
                         </div>
-                    </div>
+                    </form>
                     <div class="related-post-wrapper pt-30 mb-30">
                         <div class="row align-items-center">
                             <div class="col">
@@ -384,7 +396,56 @@
                 </div>
             </div>
         </div>
-    </section><!--==============================
-	Footer Area
-==============================-->
+    </section>
+
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+    $("#commentSaveBtn").click(function(){
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("CreateComment")',
+            dataType: 'json',
+            data: {
+                PostId: $('#PostId').val(),
+                UserName: $('#UserName').val(),
+                CText: $('#CText').val(), // Corrected key to match the parameter name in the controller action
+            },
+            success: function(yorum){
+                $('#comments').append(`
+                <li class="th-comment-item">
+                                <div class="th-post-comment">
+                                    <div class="comment-avater">
+                                        <img src="~/img/blog/comment-author-3.jpg" alt="Comment Author">
+                                    </div>
+                                    <div class="comment-content">
+                                       
+                                        <h3 class="name">${yorum.userName}</h3>
+                                        <p class="text">${yorum.cText}</p>
+                                        <div class="reply_and_edit">
+                                            <a href="blog-details.html" class="reply-btn"><i class="fas fa-reply"></i>Reply</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                `)
+            $('#UserName').val('');
+            $('#CText').val('');
+           
+            }
+            
+        });
+        return false;
+    });
+});
+
+    </script>
+
+
+        <script>
+        // Update the HTML to reflect the new comment count
+        document.querySelector('.blog-inner-title').textContent ="Bu konu ile ilgili @commentCount yorum var 🥸";
+    </script>
+};
    

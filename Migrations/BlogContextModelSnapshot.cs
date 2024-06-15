@@ -108,6 +108,9 @@ namespace BuffBlog.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int?>("UserId"));
 
+                    b.Property<string>("UserBio")
+                        .HasColumnType("text");
+
                     b.Property<string>("UserHash")
                         .HasColumnType("text");
 

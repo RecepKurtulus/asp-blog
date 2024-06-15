@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BuffBlog.Migrations
 {
     [DbContext(typeof(BlogContext))]
-    [Migration("20240319102440_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240328224002_test")]
+    partial class test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -110,6 +110,9 @@ namespace BuffBlog.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int?>("UserId"));
+
+                    b.Property<string>("UserBio")
+                        .HasColumnType("text");
 
                     b.Property<string>("UserHash")
                         .HasColumnType("text");

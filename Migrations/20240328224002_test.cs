@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BuffBlog.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class test : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,7 +35,8 @@ namespace BuffBlog.Migrations
                     UserMail = table.Column<string>(type: "text", nullable: true),
                     UserHash = table.Column<string>(type: "text", nullable: true),
                     UserSalt = table.Column<string>(type: "text", nullable: true),
-                    UserPp = table.Column<string>(type: "text", nullable: true)
+                    UserPp = table.Column<string>(type: "text", nullable: true),
+                    UserBio = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -20,6 +20,7 @@ builder.Services.AddDbContext<BlogContext>(
 );
 builder.Services.AddScoped<IPostRepository,EfPostRepository>();
 builder.Services.AddScoped<ITagRepository,EfTagsRepository>();
+builder.Services.AddScoped<ICommentRepository,EfCommentsRepository>();
 //IPostRepository,EfPostRepository'i kullanmamızı sağlıyor.
 var app = builder.Build();
 SeedData.FillTestData(app);

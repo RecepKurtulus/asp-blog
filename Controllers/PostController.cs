@@ -13,13 +13,17 @@ namespace BuffBlog.Controllers
 
         private readonly ITagRepository _tagRepository;
 
+        private readonly ICommentRepository _commentRepository;
+
         public PostController(
             IPostRepository postRepository,
-            ITagRepository tagRepository
+            ITagRepository tagRepository,
+            ICommentRepository commentRepository
         )
         {
             _postRepository = postRepository;
             _tagRepository = tagRepository;
+            _commentRepository = commentRepository;
         }
 
         public IActionResult Index()
@@ -33,32 +37,101 @@ namespace BuffBlog.Controllers
             return View(viewModel);
         }
 
-        public IActionResult PostDetails(int id)
+        public async Task<IActionResult> PostDetails(int id)
         {
-            var Post =
-                _postRepository.Posts.FirstOrDefault(p => p.PostId == id);
-
-            return View("PostDetails", Post);
+            var postQuery =
+                _postRepository
+                    .Posts
+                    .Include(x => x.Tags)
+                    .Include(x => x.Comments)
+                    .ThenInclude(x => x.User);
+            var tagsQuery = _tagRepository.Tags;
+            if (id != null)
+            {
+                var post =
+                    await postQuery.FirstOrDefaultAsync(p => p.PostId == id);
+                if (post != null)
+                {
+                    var viewModel = new PostViewModel { Post = post };
+                    return View("PostDetails", viewModel);
+                }
+                else
+                {
+                    return View("~/Views/Shared/NotFound.cshtml"); // Return a 404 Not Found result
+                }
+            }
+            else
+            {
+                // Handle the case where id is null, perhaps return a BadRequest result
+                return NotFound("~/Views/Shared/NotFound.cshtml");
+            }
         }
 
         public async Task<IActionResult> GetPostsByTag(string ttext)
         {
             var posts = _postRepository.Posts;
-            var tags =_tagRepository.Tags;
-            Tag spesTag=null;
-            
+            var tags = _tagRepository.Tags;
+            Tag spesTag = null;
+
             if (ttext != null)
-             {
-                posts =  posts.Where(x => x.Tags.Any(t => t.TText == ttext));
-                spesTag = await tags.FirstOrDefaultAsync(t => t.TText == ttext);
+            {
+                var postsWithTag =
+                    posts.Where(x => x.Tags.Any(t => t.TText == ttext));
+                if (
+                    postsWithTag.Any() // Check if there are any posts with the specified tag
+                )
+                {
+                    spesTag =
+                        await tags.FirstOrDefaultAsync(t => t.TText == ttext);
+                    var postsList =
+                        await postsWithTag
+                            .OrderByDescending(p => p.PPublishedOn)
+                            .ToListAsync();
+
+                    var viewModel =
+                        new PostViewModel { Posts = postsList, Tag = spesTag };
+
+                    return View("PostsByTag", viewModel);
+                }
+                else
+                {
+                    return View("~/Views/Shared/NotFound.cshtml");
+                }
             }
-            var postsList =await posts.ToListAsync();
-            var viewModel =
-                new PostViewModel {  Posts = postsList,Tag = spesTag };
-            
-            return View("PostsByTag", viewModel);
+            else
+            {
+                return View("~/Views/Shared/NotFound.cshtml");
+            }
+        }
+
+        [HttpPost]
+        public JsonResult CreateComment(int PostId, string UserName, string CText)
+        {
+            var lastId =
+                _commentRepository.Comments.Max(comment => comment.CommentId); // Get the last CommentId
+            var newCommentId = lastId + 1; // Increment the last CommentId by one to get the new CommentId
+
+            var entity =
+                new Comment {
+                    CommentId = newCommentId,
+                    CText = CText,
+                    CPublishedOn = DateTime.UtcNow,
+                    Post =
+                        _postRepository
+                            .Posts
+                            .FirstOrDefault(p => p.PostId == PostId),
+                    User = new User { UserName = UserName }
+                };
+
+            _commentRepository.CreateComment (entity);
+
+            return Json(new{
+                UserName,
+                CText,
+                entity.CPublishedOn
+                
+
+        });
         }
     }
-
-    
 }
